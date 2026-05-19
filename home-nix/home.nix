@@ -128,180 +128,108 @@
       "modules": [
         {
           "type": "title",
-          "key": " ",
-          "keyIcon": "",
-          "fqdn": false,
-          "color": {
-            "user": "",
-            "at": "",
-            "host": ""
-          }
+          "key": "",
+          "keyColor": "35"
         },
         {
           "type": "separator",
-          "string": "-",
-          "outputColor": "",
-          "times": 0
+          "string": " "
         },
         {
           "type": "os",
-          "keyIcon": ""
+          "key": "",
+          "keyColor": "34"
         },
         {
           "type": "host",
-          "keyIcon": "󰌢"
+          "key": "󰌢",
+          "keyColor": "32"
         },
         {
           "type": "kernel",
-          "keyIcon": ""
+          "key": "󰒔",
+          "keyColor": "35"
         },
         {
           "type": "uptime",
-          "keyIcon": ""
+          "key": "󱎫",
+          "keyColor": "33"
         },
         {
           "type": "packages",
-          "keyIcon": "󰏖",
-          "disabled": ["apk"],
-          "combined": false
+          "key": "󰏖",
+          "keyColor": "31"
         },
         {
           "type": "shell",
-          "keyIcon": ""
+          "key": "",
+          "keyColor": "36"
         },
         {
           "type": "display",
-          "keyIcon": "󰍹",
-          "compactType": "none",
-          "preciseRefreshRate": false
+          "key": "󰍹",
+          "keyColor": "34"
         },
         {
           "type": "de",
-          "keyIcon": ""
+          "key": "󰧨",
+          "keyColor": "32"
         },
         {
           "type": "wm",
-          "keyIcon": "",
-          "detectPlugin": true
-        },
-        {
-          "type": "wmtheme",
-          "keyIcon": "󰓸"
+          "key": "",
+          "keyColor": "35"
         },
         {
           "type": "theme",
-          "keyIcon": "󰉼"
+          "key": "󰉼",
+          "keyColor": "33"
         },
         {
           "type": "icons",
-          "keyIcon": ""
-        },
-        {
-          "type": "font",
-          "keyIcon": ""
-        },
-        {
-          "type": "cursor",
-          "keyIcon": "󰆿"
+          "key": "󰀻",
+          "keyColor": "31"
         },
         {
           "type": "terminal",
-          "keyIcon": ""
-        },
-        {
-          "type": "terminalfont",
-          "keyIcon": ""
+          "key": "",
+          "keyColor": "36"
         },
         {
           "type": "cpu",
-          "keyIcon": "",
-          "temp": false,
-          "showPeCoreCount": false
+          "key": "",
+          "keyColor": "34"
         },
         {
           "type": "gpu",
-          "keyIcon": "󰾲",
-          "driverSpecific": false,
-          "detectionMethod": "pci",
-          "temp": false,
-          "hideType": "none",
-          "percent": {
-            "green": 50,
-            "yellow": 80,
-            "type": 0
-          }
+          "key": "󰾲",
+          "keyColor": "32"
         },
         {
           "type": "memory",
-          "keyIcon": "",
-          "percent": {
-            "green": 50,
-            "yellow": 80,
-            "type": 0
-          }
-        },
-        {
-          "type": "swap",
-          "percent": {
-            "green": 50,
-            "yellow": 80,
-            "type": 0
-          },
-          "keyIcon": "󰓡",
-          "separate": false
+          "key": "",
+          "keyColor": "35"
         },
         {
           "type": "disk",
-          "keyIcon": "",
-          "showRegular": true,
-          "showExternal": true,
-          "showHidden": false,
-          "showSubvolumes": false,
-          "showReadOnly": true,
-          "showUnknown": false,
-          "folders": "",
-          "hideFolders": "/efi:/boot:/boot/*",
-          "hideFS": "",
-          "useAvailable": false,
-          "percent": {
-            "green": 50,
-            "yellow": 80,
-            "type": 0
-          }
+          "key": "󰋊",
+          "keyColor": "33"
         },
         {
           "type": "battery",
-          "keyIcon": "",
-          "temp": false,
-          "percent": {
-            "green": 50,
-            "yellow": 20,
-            "type": 0
-          }
-        },
-        {
-          "type": "poweradapter",
-          "keyIcon": "󰚥"
-        },
-        {
-          "type": "locale",
-          "keyIcon": ""
+          "key": "",
+          "keyColor": "31"
         },
         "break",
         {
           "type": "colors",
-          "key": " ",
-          "keyIcon": "",
-          "symbol": "block",
-          "paddingLeft": 0,
-          "block": {
-            "width": 3,
-            "range": [0, 15]
-          }
+          "key": "",
+          "symbol": "circle"
         }
       ]
     }
   '';
+
 
   # ============================================================
   # Niri
