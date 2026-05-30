@@ -256,7 +256,7 @@
 
     // Spawn at startup
     spawn-at-startup "nm-applet"
-    spawn-at-startup "waybar"
+    spawn-at-startup "ironbar"
     spawn-at-startup "awww-daemon"
     spawn-sh-at-startup "sleep 1 && awww img /etc/nixos/home-nix/niri/sample.jpg"
     spawn-at-startup "dunst"
@@ -506,352 +506,75 @@
   };
 
   # ============================================================
-  # Waybar
+  # Ironbar
   # ============================================================
-  programs.waybar = {
-    enable  = true;
-    # Собираем waybar с поддержкой модуля niri/workspaces
-    package = pkgs.waybar.override { niriSupport = true; };
+  xdg.configFile."ironbar/style.css".text = ''
+    /* Базовые настройки для всей панели */
+    * {
+      font-family: "JetBrainsMono Nerd Font", sans-serif;
+      font-size: 13px;
+      border: none;
+      border-radius: 0;
+      background: none; /* Убирает дефолтные белые фоны у виджетов */
+    }
 
-    settings = [{
-      layer        = "top";
-      position     = "top";
-      height       = 39;
-      margin-top   = 3;
-      margin-left  = 10;  # Убрали жесткие отступы
-      margin-right = 10;  # Убрали жесткие отступы
-      modules-left   = [ "custom/launcher" "clock"];
-      modules-right  = [
-        "pulseaudio" "network" "cpu" "memory"
-        "backlight" "battery" "tray" "custom/power"
-      ];
+    /* Фон самой панели (Catppuccin Mocha Crust) */
+    window {
+      background-color: #11111b;
+      color: #cdd6f4;
+    }
 
-      "niri/workspaces" = {
-        disable-scroll = true;
-        all-outputs    = true;
-        format         = "{name}";
-        on-click       = "activate";
-      };
+    /* Контейнер, который держит левую, центральную и правую части */
+    .mainbar {
+      padding: 0 8px;
+    }
 
-      "custom/launcher" = {
-        format   = " ";
-        tooltip  = false;
-        on-click = "wofi --drun";
-      };
+    /* Стили для кнопок воркспейсов */
+    .workspace {
+      color: #6c7086; /* Overlay 0 */
+      padding: 0 12px;
+      background-color: transparent;
+    }
 
-      "custom/power" = {
-        format          = "⏻ ";
-        tooltip         = false;
-        on-click        = "shutdown now";
-        on-click-right  = "reboot";
-      };
+    .workspace.active {
+      color: #cba6f7; /* Mauve */
+      background-color: #313244; /* Surface 0 */
+      border-radius: 4px;
+    }
 
-      "tray" = {
-        spacing   = 10;
-        icon-size = 18;
-      };
+    .workspace.urgent {
+      color: #f38ba8; /* Red */
+    }
 
-      "clock" = {
-        tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
-        format         = " {:%H:%M}";
-        format-alt     = " {:%Y-%m-%d}";
-      };
+    /* Текст активного окна по центру */
+    .focused {
+      color: #bac2de;
+    }
 
-      "cpu" = {
-        format  = " {usage}% ";
-        tooltip = false;
-      };
+    /* Настройка правого блока: делаем отступы между элементами */
+    .end > widget > * {
+      padding: 0 10px;
+      margin: 2px 4px;
+      border-radius: 4px;
+      background-color: #1e1e2e; /* Base */
+    }
 
-      "memory" = {
-        format = " {}% ";
-      };
+    /* Цвета для конкретных элементов в конце панели */
+    .network { color: #89b4fa; }
+    .sysinfo { color: #a6e3a1; } /* Для процессора/памяти */
+    .volume { color: #a6e3a1; }
+    .battery { color: #f9e2af; }
+    .clock {
+      color: #cba6f7;
+      font-weight: bold;
+    }
 
-      "backlight" = {
-        format       = "{percent}% {icon}";
-        format-icons = [ "󰃞" "󰃟" "󰃠" ];
-      };
-
-      "battery" = {
-        states = {
-          warning  = 30;
-          critical = 15;
-        };
-        format          = "{capacity}% {icon}";
-        format-full     = "{capacity}% {icon}";
-        format-charging = "{capacity}% ";
-        format-plugged  = "{capacity}% ";
-        format-alt      = "{time} {icon}";
-        format-icons    = [ "" "" "" "" "" ];
-      };
-
-      "network" = {
-        format-wifi       = " {essid} ({signalStrength}%) ";
-        format-ethernet   = "󰈀 {ifname} ";
-        tooltip-format    = "{ifname} via {gwaddr} ";
-        format-linked     = "󰈀 {ifname} (No IP) ";
-        format-disconnected = "󰤮 Disconnected ";
-        format-alt        = "{ifname}: {ipaddr}/{cidr}";
-      };
-
-      "pulseaudio" = {
-        format                 = "{volume}% {icon} {format_source} ";
-        format-bluetooth       = "{volume}% {icon}  {format_source}";
-        format-bluetooth-muted = "󰂲 {format_source}";
-        format-muted           = "󰝟 {format_source}";
-        format-source          = " {volume}% ";
-        format-source-muted    = " ";
-        format-icons = {
-          headphone  = "";
-          hands-free = "";
-          headset    = "";
-          phone      = "";
-          portable   = "";
-          car        = "";
-          default    = [ "" "" "" ];
-        };
-        on-click = "pavucontrol";
-      };
-    }];
-
-    style = ''
-      * {
-          border: none;
-          border-radius: 10px;
-          font-family: "JetbrainsMono Nerd Font";
-          font-size: 17px;
-          min-height: 10px;
-      }
-
-      window#waybar {
-          background: transparent;
-      }
-
-      window#waybar.hidden {
-          opacity: 0.2;
-      }
-
-      #window {
-          margin-top: 6px;
-          padding-left: 10px;
-          padding-right: 10px;
-          border-radius: 10px;
-          transition: none;
-          color: transparent;
-          background: transparent;
-      }
-
-      #workspaces {
-          margin-top: 6px;
-          margin-left: 12px;
-          font-size: 4px;
-          margin-bottom: 0px;
-          border-radius: 10px;
-          background: #161320;
-          transition: none;
-      }
-
-      #workspaces button {
-          transition: none;
-          color: #B5E8E0;
-          background: transparent;
-          font-size: 16px;
-          border-radius: 2px;
-      }
-
-      #workspaces button.occupied {
-          transition: none;
-          color: #F28FAD;
-          background: transparent;
-          font-size: 4px;
-      }
-
-      #workspaces button.active {
-          color: #ABE9B3;
-          border-top: 2px solid #ABE9B3;
-          border-bottom: 2px solid #ABE9B3;
-      }
-
-      #workspaces button:hover {
-          transition: none;
-          box-shadow: inherit;
-          text-shadow: inherit;
-          color: #E8A2AF;
-          border-color: #E8A2AF;
-      }
-
-      #workspaces button.active:hover {
-          color: #E8A2AF;
-      }
-
-      #network {
-          margin-top: 6px;
-          margin-left: 8px;
-          padding-left: 10px;
-          padding-right: 18px;
-          margin-bottom: 0px;
-          border-radius: 10px;
-          transition: none;
-          color: #161320;
-          background: #bd93f9;
-      }
-
-      #pulseaudio {
-          margin-top: 6px;
-          margin-left: 8px;
-          padding-left: 10px;
-          padding-right: 10px;
-          margin-bottom: 0px;
-          border-radius: 10px;
-          transition: none;
-          color: #1A1826;
-          background: #FAE3B0;
-      }
-
-      #battery {
-          margin-top: 6px;
-          margin-left: 8px;
-          padding-left: 10px;
-          padding-right: 10px;
-          margin-bottom: 0px;
-          border-radius: 10px;
-          transition: none;
-          color: #161320;
-          background: #B5E8E0;
-      }
-
-      #battery.charging, #battery.plugged {
-          color: #161320;
-          background-color: #B5E8E0;
-      }
-
-      #battery.critical:not(.charging) {
-          background-color: #B5E8E0;
-          color: #161320;
-          animation-name: blink;
-          animation-duration: 0.5s;
-          animation-timing-function: linear;
-          animation-iteration-count: infinite;
-          animation-direction: alternate;
-      }
-
-      @keyframes blink {
-          to {
-              background-color: #BF616A;
-              color: #B5E8E0;
-          }
-      }
-
-      #backlight {
-          margin-top: 6px;
-          margin-left: 8px;
-          padding-left: 10px;
-          padding-right: 10px;
-          margin-bottom: 0px;
-          border-radius: 10px;
-          transition: none;
-          color: #161320;
-          background: #F8BD96;
-      }
-
-      #clock {
-          margin-top: 6px;
-          margin-left: 8px;
-          padding-left: 10px;
-          padding-right: 10px;
-          margin-bottom: 0px;
-          border-radius: 10px;
-          transition: none;
-          color: #161320;
-          background: #ABE9B3;
-      }
-
-      #memory {
-          margin-top: 6px;
-          margin-left: 8px;
-          padding-left: 10px;
-          margin-bottom: 0px;
-          padding-right: 10px;
-          border-radius: 10px;
-          transition: none;
-          color: #161320;
-          background: #DDB6F2;
-      }
-
-      #cpu {
-          margin-top: 6px;
-          margin-left: 8px;
-          padding-left: 10px;
-          margin-bottom: 0px;
-          padding-right: 10px;
-          border-radius: 10px;
-          transition: none;
-          color: #161320;
-          background: #96CDFB;
-      }
-
-      #tray {
-          margin-top: 6px;
-          margin-left: 8px;
-          padding-left: 10px;
-          margin-bottom: 0px;
-          padding-right: 10px;
-          border-radius: 10px;
-          transition: none;
-          color: #B5E8E0;
-          background: #161320;
-      }
-
-      #custom-launcher {
-          font-size: 24px;
-          margin-top: 6px;
-          margin-left: 8px;
-          padding-left: 10px;
-          padding-right: 5px;
-          border-radius: 10px;
-          transition: none;
-          color: #89DCEB;
-          background: #161320;
-      }
-
-      #custom-power {
-          font-size: 20px;
-          margin-top: 6px;
-          margin-left: 8px;
-          margin-right: 8px;
-          padding-left: 10px;
-          padding-right: 5px;
-          margin-bottom: 0px;
-          border-radius: 10px;
-          transition: none;
-          color: #161320;
-          background: #F28FAD;
-      }
-
-      #custom-wallpaper {
-          margin-top: 6px;
-          margin-left: 8px;
-          padding-left: 10px;
-          padding-right: 10px;
-          margin-bottom: 0px;
-          border-radius: 10px;
-          transition: none;
-          color: #161320;
-          background: #C9CBFF;
-      }
-
-      #custom-spotify {
-          margin-top: 6px;
-          margin-left: 8px;
-          padding-left: 10px;
-          padding-right: 10px;
-          margin-bottom: 0px;
-          border-radius: 10px;
-          transition: none;
-          color: #161320;
-          background: #F2CDCD;
-      }
-    '';
-  };
+    /* Системный лоток (трей) */
+    .tray {
+      background-color: transparent;
+      padding: 0 4px;
+    }
+  '';
 
   # ============================================================
   # Wofi
