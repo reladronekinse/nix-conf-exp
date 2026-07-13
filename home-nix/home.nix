@@ -25,6 +25,99 @@
 
   programs.home-manager.enable = true;
 
+  
+  programs.wezterm = {
+    enable = true;
+
+    extraConfig = ''
+      local wezterm = require 'wezterm'
+      local config = wezterm.config_builder()
+
+      -- Шрифт
+      config.font = wezterm.font("JetBrainsMono Nerd Font")
+      config.font_size = 13.0
+
+      -- Системные настройки и оболочка
+      config.enable_wayland = true
+      config.default_prog = { "fish" }
+      config.window_close_confirmation = "NeverPrompt"
+
+      -- Размеры окна (в символах) и прозрачность
+      config.initial_cols = 95
+      config.initial_rows = 35
+      config.window_background_opacity = 0.5
+
+      -- Отступы (в пикселях)
+      config.window_padding = {
+        left = 20,
+        right = 20,
+        top = 20,
+        bottom = 20,
+      }
+
+      -- Настройка вкладок (отключение «увесистого» таб-бара для стиля, близкого к fade)
+      config.use_fancy_tab_bar = false
+      config.tab_max_width = 25
+
+      -- Цветовая схема — Neovim Tokyo Night
+      config.colors = {
+        background = "#14151e",
+        foreground = "#98b0d3",
+        cursor_bg  = "#cbced3",
+        cursor_fg  = "#a5b6cf",
+        cursor_border = "#cbced3",
+        selection_fg  = "#a5b6cf",
+        selection_bg  = "#1c1e27",
+        split         = "#3d59a1", -- Аналог active_border_color
+        
+        ansi = {
+          "#151720", -- color0
+          "#dd6777", -- color1
+          "#90ceaa", -- color2
+          "#ecd3a0", -- color3
+          "#86aaec", -- color4
+          "#c296eb", -- color5
+          "#93cee9", -- color6
+          "#cbced3", -- color7
+        },
+        brights = {
+          "#4f5572", -- color8
+          "#e26c7c", -- color9
+          "#95d3af", -- color10
+          "#f1d8a5", -- color11
+          "#8baff1", -- color12
+          "#c79bf0", -- color13
+          "#98d3ee", -- color14
+          "#d0d3d8", -- color15
+        },
+        tab_bar = {
+          background = "#101014",
+          active_tab = {
+            bg_color  = "#16161e",
+            fg_color  = "#3d59a1",
+            intensity = "Bold",
+          },
+          inactive_tab = {
+            bg_color  = "#16161e",
+            fg_color  = "#787c99",
+            intensity = "Bold",
+          },
+        },
+      }
+
+      -- Горячие клавиши (аналог kitty_mod+t: новая вкладка в текущей рабочей директории)
+      config.keys = {
+        {
+          key = "t",
+          mods = "CTRL|SHIFT",
+          action = wezterm.action.SpawnTab("CurrentPaneDomain"),
+        },
+      }
+
+      return config
+    '';
+  };
+
   # ── XDG config files ──────────────────────────────────────
   # ============================================================
   # Fastfetch
@@ -38,9 +131,9 @@
 
       "logo": {
         "type": "kitty",
-        "source": "~/.config/fastfetch/sample.png",
-        "width": 33,
-        "height": 15
+        "source": "/etc/nixos/home-nix/fastfetch/sample.png",
+        "width": 36,
+        "height": 16
       },
 
       "display": {
@@ -259,11 +352,14 @@
     spawn-at-startup "ironbar"
     spawn-at-startup "awww-daemon"
     spawn-sh-at-startup "sleep 1 && awww img /etc/nixos/home-nix/niri/sample.jpg"
-    spawn-at-startup "dunst"
+    spawn-at-startup "mako"
     spawn-at-startup "xwayland-satellite"
+    spawn-at-startup "systemctl" "--user" "import-environment" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP"
+    spawn-at-startup "systemctl" "--user" "restart" "xdg-desktop-portal.service"
 
     // Environment variables
     environment {
+        XDG_CURRENT_DESKTOP "niri"
         XCURSOR_THEME "Bibata-Modern-Classic"
         XCURSOR_SIZE "24"
         DISPLAY ":0"
@@ -274,7 +370,7 @@
     }
     prefer-no-csd
     // Outputs
-    output "DP-1" {
+    output "DP-2" {
         mode "2560x1440@164.998"
         position x=0 y=0
         variable-refresh-rate
@@ -345,7 +441,7 @@
     // Keybindings
     binds {
         Mod+Shift+Slash { show-hotkey-overlay; }
-        Mod+Q { spawn "kitty"; }
+        Mod+Q { spawn "wezterm"; }
         Mod+R { spawn "wofi" "--show" "drun"; }
         Super+Alt+L { spawn "swaylock"; }
 
@@ -418,76 +514,6 @@
         XF86MonBrightnessDown allow-when-locked=true { spawn "brightnessctl" "--class=backlight" "set" "10%-"; }
     }
   '';
-
-  # ============================================================
-  # Kitty
-  # ============================================================
-  programs.kitty = {
-    enable = true;
-
-    font = {
-      name = "JetBrainsMono Nerd Font";
-      size = 13;
-    };
-
-    settings = {
-      linux_display_server   = "wayland";
-      wayland_titlebar_color = "background";
-      bold_font              = "auto";
-      italic_font            = "auto";
-      bold_italic_font       = "auto";
-      background_opacity     = "0.5";
-      shell                  = "fish";
-
-      # Window
-      initial_window_width    = "95c";
-      initial_window_height   = "35c";
-      window_padding_width    = 20;
-      confirm_os_window_close = 0;
-
-      # Colors — Neovim Tokyo Night
-      background = "#14151e";
-      foreground = "#98b0d3";
-
-      color0  = "#151720"; color8  = "#4f5572";
-      color1  = "#dd6777"; color9  = "#e26c7c";
-      color2  = "#90ceaa"; color10 = "#95d3af";
-      color3  = "#ecd3a0"; color11 = "#f1d8a5";
-      color4  = "#86aaec"; color12 = "#8baff1";
-      color5  = "#c296eb"; color13 = "#c79bf0";
-      color6  = "#93cee9"; color14 = "#98d3ee";
-      color7  = "#cbced3"; color15 = "#d0d3d8";
-
-      cursor            = "#cbced3";
-      cursor_text_color = "#a5b6cf";
-
-      selection_foreground = "#a5b6cf";
-      selection_background = "#1c1e27";
-
-      url_color = "#5de4c7";
-
-      active_border_color   = "#3d59a1";
-      inactive_border_color = "#101014";
-      bell_border_color     = "#fffac2";
-
-      # Tab bar
-      tab_bar_style           = "fade";
-      tab_fade                = 1;
-      active_tab_foreground   = "#3d59a1";
-      active_tab_background   = "#16161e";
-      active_tab_font_style   = "bold";
-      inactive_tab_foreground = "#787c99";
-      inactive_tab_background = "#16161e";
-      inactive_tab_font_style = "bold";
-      tab_bar_background      = "#101014";
-
-      macos_titlebar_color = "#16161e";
-    };
-
-    keybindings = {
-      "kitty_mod+t" = "new_tab_with_cwd";
-    };
-  };
 
   # ============================================================
   # Fish
@@ -598,6 +624,7 @@
       allow_images   = true;
       image_size     = 16;
       gtk_dark       = true;
+      exec_shell     = true;
     };
 
     style = ''
