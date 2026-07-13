@@ -87,9 +87,32 @@
   security.sudo.enable = false;
 
   xdg.portal = {
-    enable       = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-gnome ];
-    config.niri.default = [ "gnome" "gtk" ];
+    enable = true;
+    xdgOpenUsePortal = true;
+
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-gtk
+      xdg-desktop-portal-wlr
+    ];
+
+    config = {
+      common = {
+        default = lib.mkForce [ "gtk" ];
+        "org.freedesktop.impl.portal.ScreenCast" = lib.mkForce [ "wlr" ];
+        "org.freedesktop.impl.portal.Screenshot" = lib.mkForce [ "wlr" ];
+      };
+
+      niri = {
+        default = lib.mkForce [ "gtk" ];
+        "org.freedesktop.impl.portal.ScreenCast" = lib.mkForce [ "wlr" ];
+        "org.freedesktop.impl.portal.Screenshot" = lib.mkForce [ "wlr" ];
+      };
+    };
+  };
+
+  programs.throne = {
+    enable          = true;
+    tunMode.enable  = true;
   };
 
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
@@ -143,7 +166,7 @@
 
     # Niri / Wayland
     waybar wofi
-    awww dunst
+    awww mako
 
     # Audio / brightness / clipboard
     alsa-utils pavucontrol playerctl
@@ -152,7 +175,7 @@
     # Apps
     kitty
     kdePackages.dolphin kdePackages.ark kdePackages.kate
-    firefox
+    librewolf-bin
     telegram-desktop
     libreoffice
     obs-studio
@@ -174,6 +197,11 @@
     globe-cli
     qbittorrent
     xwayland-satellite
+  ];
+
+  nixpkgs.config.permittedInsecurePackages = [
+    "librewolf-unwrapped-151.0.2-1" "librewolf-151.0.2-1"
+    "librewolf-bin-151.0.1-2" "librewolf-bin-unwrapped-151.0.1-2"
   ];
 
   # ── Programs ──────────────────────────────────────────────
