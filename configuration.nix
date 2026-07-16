@@ -70,8 +70,6 @@
   };
 
   programs.niri.enable = true;
-  programs.amnezia-vpn.enable = true;
-  services.cloudflare-warp.enable = true;
   programs.xwayland.enable = true;
   # Включить doas
   security.doas.enable = true;
@@ -197,6 +195,8 @@
     globe-cli
     qbittorrent
     xwayland-satellite
+    neovim
+    python3
   ];
 
   nixpkgs.config.permittedInsecurePackages = [
@@ -226,6 +226,7 @@
     useUserPackages      = true;
     backupFileExtension  = "backup";
     users.reladronekinse = import ./home-nix/home.nix;
+    users.root            = import ./home-nix/root.nix;
   };
 
   system.stateVersion = "26.05";
