@@ -4,6 +4,10 @@
 { config, pkgs, lib, ... }:
 
 {
+  imports = [
+    ./modules/neovim.nix
+  ];
+
   home = {
     username    = "reladronekinse";
     homeDirectory = "/home/reladronekinse";
@@ -523,6 +527,7 @@
 
     interactiveShellInit = ''
       set -g fish_greeting
+      sleep 0.1
       fastfetch
     '';
 
