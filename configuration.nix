@@ -140,6 +140,11 @@
 
   # ── Fonts ─────────────────────────────────────────────────
   fonts.packages = with pkgs; [
+    noto-fonts
+    noto-fonts-cjk-sans
+    noto-fonts-cjk-serif
+    liberation_ttf
+    font-awesome
     nerd-fonts.fira-code
     nerd-fonts.jetbrains-mono
     font-awesome
