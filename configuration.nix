@@ -4,10 +4,10 @@
 { config, pkgs, lib, ... }:
 
 {
-  imports = [
-    ./hardware-configuration.nix
-    <home-manager/nixos>
-  ];
+  imports = [];
+
+  # ── Flakes & Nix Settings ─────────────────────────────────
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # ── Boot ──────────────────────────────────────────────────
   boot = {
@@ -21,6 +21,24 @@
       systemd-boot.enable = false;
       grub.enable         = false;
       refind.enable       = true;
+    };
+  };
+
+  # ── Btrfs & Snapper ───────────────────────────────────────
+  services.snapper = {
+    snapshotInterval = "hourly";
+    cleanupInterval = "1d";
+    configs = {
+      root = {
+        SUBVOLUME = "/";
+        ALLOW_USERS = [ "reladronekinse" ];
+        TIMELINE_CREATE = true;
+        TIMELINE_CLEANUP = true;
+        TIMELINE_LIMIT_HOURLY = "10";
+        TIMELINE_LIMIT_DAILY = "7";
+        TIMELINE_LIMIT_WEEKLY = "2";
+        TIMELINE_LIMIT_MONTHLY = "1";
+      };
     };
   };
 
@@ -71,17 +89,18 @@
 
   programs.niri.enable = true;
   programs.xwayland.enable = true;
+
   # Включить doas
   security.doas.enable = true;
 
   # Настройка правил: сохранять переменные окружения и запоминать пароль
   security.doas.extraRules = [{
-    groups = [ "wheel" ]; # Пользователи в этой группе получают права
-    persist = true;       # Не запрашивать пароль каждый раз
-    keepEnv = true;       # Сохранять $PATH и другие переменные
+    groups = [ "wheel" ];
+    persist = true;
+    keepEnv = true;
   }];
 
-  # Отключить sudo (опционально, если хотите полностью убрать)
+  # Отключить sudo
   security.sudo.enable = false;
 
   xdg.portal = {
@@ -147,17 +166,14 @@
     font-awesome
     nerd-fonts.fira-code
     nerd-fonts.jetbrains-mono
-    font-awesome
   ];
 
   # ── System Packages ───────────────────────────────────────
   nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
-    # Core utils
-    vim wget git
+    vim wget git snapper btrfs-progs
 
-    # Wayland / display
     wayland mesa libinput
     xdg-desktop-portal
     xdg-desktop-portal-gnome
@@ -167,15 +183,12 @@
     qt6.qtvirtualkeyboard
     qt6.qtmultimedia
 
-    # Niri / Wayland
     waybar wofi
     awww mako
 
-    # Audio / brightness / clipboard
     alsa-utils pavucontrol playerctl
     brightnessctl wl-clipboard
 
-    # Apps
     kitty
     kdePackages.dolphin kdePackages.ark kdePackages.kate
     librewolf-bin
@@ -187,11 +200,9 @@
     mpv
     heroic
 
-    # Eye candy / misc
     fastfetch feh nwg-look
     cava cmatrix
 
-    # Tools
     ethtool
     btop
     cool-retro-term
